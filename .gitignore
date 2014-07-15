@@ -1,0 +1,8 @@
+.shake*
+*.o
+*.hi
+*~
+dist
+output
+.cabal-sandbox
+cabal.sandbox.config
