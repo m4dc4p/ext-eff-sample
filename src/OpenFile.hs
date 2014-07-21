@@ -26,7 +26,7 @@ toOF :: (a -> v) -> OpenFile a v
 toOF = error "toOF should never be evaulated"
 
 -- | Run a program with the OpenFile effect.
-runOpenFile :: FilePath -> Eff (OpenFile Result :> r) result -> IO result
+runOpenFile :: FilePath -> Eff (OpenFile a :> r) result -> IO result
 runOpenFile path action = do
     h <- IO.openFile path ReadMode
     loop h (admin action)
