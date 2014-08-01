@@ -16,7 +16,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 executable ext-eff-sample
-  main-is:             OpenFile.hs
+  main-is:             Test.hs
   -- other-modules:       
   other-extensions:    OverloadedStrings
   build-depends:       base >=4.6 && <4.7, warp >= 3.0, bytestring >= 0.9,

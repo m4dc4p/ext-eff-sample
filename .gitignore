@@ -6,3 +6,11 @@ dist
 output
 .cabal-sandbox
 cabal.sandbox.config
+*.toc
+*.out
+*.snm
+*.vrb
+*.aux
+*.log
+*.nav
+*.ptb

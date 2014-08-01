@@ -1,4 +1,10 @@
 {-# LANGUAGE TypeOperators, DeriveDataTypeable, FlexibleContexts, RankNTypes, DeriveFunctor #-}
+{-
+
+This is an earlier version of the OpenFile effect work; superseded
+by OpenFile2.hs and friends.
+
+-}
 module OpenFile (readChar, runOpenFile, atEOF
        , readAll
        , OpenFile)
@@ -12,12 +18,14 @@ import System.FilePath (FilePath)
 import Data.Typeable
 import qualified Data.Char as Char
 
-data OpenFile v = Read (Char -> v) | EOF (Bool -> v)
+data OpenFile v = Read (Char -> v) 
+     | EOF (Bool -> v)
+     | GetHandle (Handle -> v)
   deriving (Typeable, Functor)
 
 -- | Read a character from an open file.
 readChar :: (Member OpenFile r) => Eff r Char
-readChar = send $ \k -> inj (Read k)
+readChar = send $ \k -> inj (GetHandle k)
 
 -- | Read all characters from a file.
 readAll :: (Member OpenFile r) => Eff r [Char]
@@ -41,7 +49,9 @@ runOpenFile path action = do
     loop h (admin action)
   where
     loop :: Handle -> (VE (OpenFile :> r) result) -> IO result
-    loop h (Val x) = return x
+    loop h (Val x) = do
+      hClose h
+      return x
     loop h eff@(E u) = 
       case prj u of
            Just (Read k) -> do
@@ -51,7 +61,7 @@ runOpenFile path action = do
              eof <- hIsEOF h
              loop h (k eof)
            Nothing -> error "Could not find OpenFile"
- 
+  
 main = do
   x <- runOpenFile "Setup.hs" readAll
   putStrLn x
